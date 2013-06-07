@@ -1,12 +1,20 @@
 """
 find_lyrics, a simple text based lyrics retrieval application.
 Srinidhi Kaushik, shrinidhi.kaushik@gmail.com, 06/06/13.
+
+For colorama:
+Fore: BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, RESET.
+Back: BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE, RESET.
+Style: DIM, NORMAL, BRIGHT, RESET_ALL
 """
 #!/usr/bin/python
 import re
 import html2text
 import urllib2
+from colorama import init, Fore, Back, Style
 from BeautifulSoup import BeautifulSoup
+
+
 
 def find_lyrics(song, band):
 	song_copy = song
@@ -18,6 +26,7 @@ def find_lyrics(song, band):
 	match_expr = band + "\/" + song
 	flag = 0
 	possible = []
+	init()
 	
 	html_page = urllib2.urlopen("http://search.azlyrics.com/search.php?q="+str(song))
 	soup = BeautifulSoup(html_page)
@@ -26,10 +35,10 @@ def find_lyrics(song, band):
 		possible.append(link.get('href'))
  	
  	if (len(possible) == 0):
- 		print("\nCouldn\'t retrieve lyrics.")
+ 		print(Fore.RED + Style.BRIGHT + "Error: Couldn\'t retrieve lyrics.")
  		exit()
  	
- 	print("\n" + song_copy + ", by " + band_copy + ":")
+ 	print("\n" + Fore.WHITE + Back.GREEN + Style.BRIGHT + song_copy + Style.RESET_ALL + " by " + Fore.WHITE + Back.CYAN + Style.BRIGHT + band_copy + Style.RESET_ALL + ":")
 	
 	new_html = urllib2.urlopen(possible[0]).readlines()
 	for line in new_html:
