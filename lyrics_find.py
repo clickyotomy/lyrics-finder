@@ -9,12 +9,9 @@ Style: DIM, NORMAL, BRIGHT, RESET_ALL
 """
 #!/usr/bin/python
 import re
-import html2text
 import urllib2
 from colorama import init, Fore, Back, Style
-from BeautifulSoup import BeautifulSoup
-
-
+from bs4 import BeautifulSoup
 
 def find_lyrics(song, band):
 	song_copy = song
@@ -26,13 +23,13 @@ def find_lyrics(song, band):
 	match_expr = band + "\/" + song
 	flag = 0
 	possible = []
-	init()
-	
-	html_page = urllib2.urlopen("http://search.azlyrics.com/search.php?q="+str(song))
+	print(song)
+	html_page = urllib2.urlopen("http://search.azlyrics.com/search.php?q=" + str(song))
 	soup = BeautifulSoup(html_page)
 	
-	for link in soup.findAll('a', attrs={'href': re.compile(match_expr)}):
+	for link in soup.find_all('a', {'href': re.compile(match_expr)}):
 		possible.append(link.get('href'))
+	print(possible)
  	
  	if (len(possible) == 0):
  		print(Fore.RED + Style.BRIGHT + "Error: Couldn\'t retrieve lyrics.")
@@ -41,7 +38,7 @@ def find_lyrics(song, band):
  	print("\n" + Fore.WHITE + Back.GREEN + Style.BRIGHT + song_copy + Style.RESET_ALL + " by " + Fore.WHITE + Back.CYAN + Style.BRIGHT + band_copy + Style.RESET_ALL + ":")
 	
 	new_html = urllib2.urlopen(possible[0]).readlines()
-	for line in new_html:
+	"""for line in new_html:
 		if (re.match("<!-- start of lyrics -->", line)):
 			flag = 1
 		elif (re.match("<!-- end of lyrics -->", line)):
@@ -50,7 +47,11 @@ def find_lyrics(song, band):
 			line = re.sub('<[^<]+?>', '', line)
 			if (line != "\n" or line != ""):
 				line = re.sub("\n", '', line)
-				print(line)
+				print(line)"""
+
+	new_soup = BeautifulSoup(new_html)
+	for i in new_soup.find_all("div", {"style":"margin-left:10px;margin-right:10px;"}):
+		print(i)
 
 def main():
 	print("find_lyrics")
